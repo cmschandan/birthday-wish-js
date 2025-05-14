@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Balloons & Fireworks</title>
+    <style>
+        body {
+            background-color: #282c34;
+            overflow: hidden;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .birthday-message {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite alternate;
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+        .balloon {
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            background-color: red;
+            border-radius: 50%;
+            animation: float 5s linear forwards;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh); opacity: 1; }
+            100% { transform: translateY(-10vh); opacity: 0; }
+        }
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: yellow;
+            border-radius: 50%;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="birthday-message" id="birthdayMessage">🎉 Happy Birthday, Vignesh! 🎂</div>
+
+    <script>
+        function setBirthdayMessage(name) {
+            document.getElementById("birthdayMessage").innerText = `🎉 Happy Birthday, ${name}! 🎂`;
+        }
+
+        function createBalloon() {
+            let balloon = document.createElement("div");
+            balloon.className = "balloon";
+            balloon.style.left = Math.random() * window.innerWidth + "px";
+            balloon.style.backgroundColor = `rgb(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255})`;
+            document.body.appendChild(balloon);
+
+            setTimeout(() => {
+                explodeFireworks(balloon.offsetLeft, balloon.offsetTop);
+                balloon.remove();
+            }, 5000);
+        }
+
+        function explodeFireworks(x, y) {
+            let particles = [];
+            for (let i = 0; i < 30; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.random() * 4 - 2,
+                    vy: Math.random() * 4 - 2,
+                    color: `rgb(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255})`,
+                    size: Math.random() * 3 + 1
+                });
+            }
+
+            function drawParticles() {
+                particles.forEach(p => {
+                    let firework = document.createElement("div");
+                    firework.className = "firework";
+                    firework.style.left = p.x + "px";
+                    firework.style.top = p.y + "px";
+                    firework.style.backgroundColor = p.color;
+                    firework.style.width = p.size + "px";
+                    firework.style.height = p.size + "px";
+                    document.body.appendChild(firework);
+
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.size *= 0.95;
+
+                    setTimeout(() => firework.remove(), 1000);
+                });
+
+                particles = particles.filter(p => p.size > 0.2);
+                if (particles.length > 0) requestAnimationFrame(drawParticles);
+            }
+
+            drawParticles();
+        }
+
+        setInterval(createBalloon, 1000);
+
+        setBirthdayMessage("Vignesh"); // Change this name dynamically later
+    </script>
+</body>
+</html>
